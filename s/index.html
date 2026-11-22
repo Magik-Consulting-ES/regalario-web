@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<!-- Sin peticiones externas: ni fuentes, ni analítica, ni nada. Todo lo que hace esta página ocurre en tu navegador. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<title>Tu amigo invisible</title>
+<!--
+  Página de revelación del amigo invisible de Regalario (D-035, D-038). ESTÁTICA: sin servidor, sin base de datos.
+  El enlace lleva en el fragmento (#…) un SOBRE CIFRADO (AES-256-CBC + HMAC-SHA256, clave = PBKDF2 de la palabra secreta del grupo).
+  Sin la palabra, el enlace no revela nada (ni el nombre que te toca). El fragmento no se envía a ningún servidor y la palabra
+  se teclea aquí y no sale del navegador. Formato y vector de prueba: shared/.../santa/SantaSealer.kt (idéntico aquí).
+  Requiere contexto seguro (https o localhost) por WebCrypto.
+-->
+<style>
+  :root{--bg:#F6FAF9;--card:#fff;--fg:#14231F;--mute:#4F6360;--accent:#0E7C7B;--accent-soft:#D9F0EE;--gold:#F0A93B;--line:#DCE8E6}
+  @media (prefers-color-scheme: dark){:root{--bg:#0E1514;--card:#172220;--fg:#EAF3F1;--mute:#AFC3BF;--accent:#5FD3CF;--accent-soft:#12403F;--gold:#F5B65C;--line:#2C4340}}
+  *{box-sizing:border-box} html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    display:flex;align-items:center;justify-content:center;padding:max(20px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left))}
+  main{width:100%;max-width:420px;display:flex;flex-direction:column;gap:20px;text-align:center}
+  .tag{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+  h1{font:800 clamp(28px,8vw,36px)/1.1 ui-rounded,"Avenir Next",ui-sans-serif,system-ui,sans-serif;margin:0;letter-spacing:-.01em;text-wrap:balance}
+  p{margin:0;color:var(--mute)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:28px;padding:28px 22px;display:flex;flex-direction:column;gap:14px;align-items:center}
+  .env{width:112px;height:112px;border-radius:30px;background:var(--accent-soft);display:grid;place-items:center;font-size:56px;transition:transform .4s}
+  .env.open{transform:rotate(-8deg) scale(1.08)}
+  button,a.btn{font:700 17px ui-sans-serif,system-ui,sans-serif;border:0;border-radius:999px;padding:15px 26px;cursor:pointer;width:100%;text-decoration:none;display:block;
+    background:var(--accent);color:#fff}
+  @media (prefers-color-scheme: dark){button,a.btn{color:#00322F}}
+  button.soft,a.soft{background:var(--accent-soft);color:var(--accent)}
+  button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+  .name{font:800 clamp(34px,11vw,48px)/1.1 ui-rounded,"Avenir Next",ui-sans-serif,system-ui,sans-serif;color:var(--accent);word-break:break-word}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .chip{background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:6px 14px;font-weight:700;font-size:14px}
+  .wishes{text-align:left;width:100%;border-top:1px solid var(--line);padding-top:14px}
+  .wishes b{font-size:13px;color:var(--mute);letter-spacing:.04em;text-transform:uppercase}
+  .wishes ul{margin:8px 0 0;padding-left:20px} .wishes li{margin:4px 0}
+  .small{font-size:13px}
+  input{font:700 22px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;text-align:center;text-transform:uppercase;width:100%;padding:14px;border-radius:18px;border:2px solid var(--line);background:var(--bg);color:var(--fg)}
+  input:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-color:var(--accent)}
+  .err{color:#B3261E;font-weight:600} @media (prefers-color-scheme: dark){.err{color:#FFB4AB}}
+  [hidden]{display:none!important}
+  @media (prefers-reduced-motion:reduce){.env{transition:none}}
+</style>
+</head>
+<body>
+<main>
+  <section id="code" hidden>
+    <div class="card">
+      <div class="env" aria-hidden="true">🔒</div>
+      <h1>Escribe la palabra secreta</h1>
+      <p>Este enlace está cerrado. La palabra secreta te la ha dado quien organiza el amigo invisible, <b>aparte</b> del enlace.</p>
+      <form id="codeForm" autocomplete="off" style="width:100%;display:flex;flex-direction:column;gap:12px">
+        <label for="codeInput" class="small">Palabra secreta (por ejemplo, 7KQ2M-X9PDA)</label>
+        <input id="codeInput" type="text" inputmode="text" autocapitalize="characters" autocorrect="off" spellcheck="false" maxlength="24" aria-describedby="codeErr">
+        <p id="codeErr" class="err" role="alert" hidden>No es esa. Revisa la palabra (da igual mayúsculas, guion o espacios) o pídesela otra vez a quien organiza.</p>
+        <button id="codeGo" type="submit">Abrir</button>
+      </form>
+    </div>
+    <p class="small" style="margin-top:14px">La palabra no sale de tu navegador ni se guarda en ningún sitio.</p>
+  </section>
+
+  <section id="ask" hidden>
+    <div class="card">
+      <span class="tag" id="group"></span>
+      <div class="env" aria-hidden="true">✉️</div>
+      <h1 id="hello">¿Estás solo?</h1>
+      <p>Este enlace es solo para ti. Cuando lo abras, nadie más debería ver tu pantalla.</p>
+      <button id="reveal" type="button">Descubrir a quién te toca</button>
+    </div>
+    <p class="small" style="margin-top:14px">No se guarda nada en ningún servidor: tu nombre y el de tu amigo invisible viajan cifrados dentro del enlace.</p>
+  </section>
+
+  <section id="done" hidden>
+    <div class="card">
+      <span class="tag" id="group2"></span>
+      <div class="env open" aria-hidden="true">🎁</div>
+      <p>Tu amigo invisible es</p>
+      <div class="name" id="receiver"></div>
+      <div class="chips" id="chips"></div>
+      <div class="wishes" id="wishesBox" hidden><b>Le gustaría</b><ul id="wishes"></ul></div>
+      <button id="hide" type="button" class="soft">Ocultar</button>
+      <a id="open" class="btn soft" href="#" hidden>Guardar en Regalario</a>
+    </div>
+    <p class="small" style="margin-top:14px">Guárdate el enlace o apúntalo: no hay manera de recuperarlo desde otro sitio, y es un secreto.</p>
+  </section>
+
+  <section id="bad" hidden>
+    <div class="card">
+      <div class="env" aria-hidden="true">🤔</div>
+      <h1>Este enlace no es válido</h1>
+      <p>Puede que se haya cortado al copiarlo o que no esté completo. Pídele a quien organiza que te lo reenvíe.</p>
+    </div>
+  </section>
+</main>
+<script>
+(function () {
+  'use strict';
+  var FS = '\u001F', RS = '\u001E', ITER = 200000, MIN = 1 + 16 + 16 + 16 + 32;
+  var $ = function (id) { return document.getElementById(id); };
+
+  function b64urlToBytes(s) {
+    s = s.replace(/-/g, '+').replace(/_/g, '/');
+    while (s.length % 4) s += '=';
+    var bin = atob(s), a = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i);
+    return a;
+  }
+  /** Igual que SantaSealer.normalize (Kotlin): mayúsculas, sin guiones ni espacios, O→0, I/L→1. */
+  function normalize(code) {
+    return code.toUpperCase().replace(/[\s-]/g, '').replace(/O/g, '0').replace(/[IL]/g, '1');
+  }
+  function parse(text) {
+    var f = text.split(FS);
+    if (f.length !== 7 || f[0] !== 'R1') return null;
+    return {
+      group: f[1], date: f[2] === '' ? null : Number(f[2]), budget: f[3] === '' ? null : Number(f[3]),
+      giver: f[4], receiver: f[5], wishes: f[6] === '' ? [] : f[6].split(RS).filter(Boolean)
+    };
+  }
+  /** Abre el sobre. Devuelve el ticket, o null si la palabra no es la buena o el enlace está alterado/cortado. */
+  async function open(payload, code) {
+    try {
+      var subtle = window.crypto && window.crypto.subtle;
+      if (!subtle) throw new Error('nosecure');
+      var blob = b64urlToBytes(payload.trim());
+      if (blob.length < MIN || blob[0] !== 1) return null;
+      var salt = blob.slice(1, 17), iv = blob.slice(17, 33), tag = blob.slice(blob.length - 32), ct = blob.slice(33, blob.length - 32);
+      if (ct.length === 0 || ct.length % 16 !== 0) return null;
+      var base = await subtle.importKey('raw', new TextEncoder().encode(normalize(code)), 'PBKDF2', false, ['deriveBits']);
+      var bits = new Uint8Array(await subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt: salt, iterations: ITER }, base, 512));
+      var mac = await subtle.importKey('raw', bits.slice(32, 64), { name: 'HMAC', hash: 'SHA-256' }, false, ['verify']);
+      // Primero se comprueba la firma (encrypt-then-MAC): palabra equivocada o enlace tocado => null, sin descifrar nada.
+      if (!(await subtle.verify('HMAC', mac, tag, blob.slice(0, blob.length - 32)))) return null;
+      var enc = await subtle.importKey('raw', bits.slice(0, 32), 'AES-CBC', false, ['decrypt']);
+      var plain = await subtle.decrypt({ name: 'AES-CBC', iv: iv }, enc, ct);
+      return parse(new TextDecoder('utf-8', { fatal: true }).decode(plain));
+    } catch (e) { if (e && e.message === 'nosecure') throw e; return null; }
+  }
+  window.__santa = { open: open, normalize: normalize };   // para pruebas desde la consola
+
+  var payload = location.hash.replace(/^#/, '');
+  function show(id) { ['code', 'ask', 'done', 'bad'].forEach(function (s) { $(s).hidden = s !== id; }); }
+
+  // ¿Parece un sobre? (versión 1 y tamaño mínimo). Si no, enlace roto.
+  var looksOk = false;
+  try { var b = payload ? b64urlToBytes(payload.trim()) : null; looksOk = !!b && b.length >= MIN && b[0] === 1; } catch (e) {}
+  if (!looksOk) { show('bad'); return; }
+  show('code'); $('codeInput').focus();
+
+  function fill(t) {
+    document.title = 'Tu amigo invisible · ' + t.group;
+    $('group').textContent = $('group2').textContent = t.group;
+    $('hello').textContent = t.giver ? '¿Estás solo, ' + t.giver + '?' : '¿Estás solo?';
+    $('receiver').textContent = t.receiver;
+    var chips = $('chips'); chips.textContent = '';
+    function addChip(text) { var s = document.createElement('span'); s.className = 'chip'; s.textContent = text; chips.appendChild(s); }
+    if (t.budget != null) addChip('Hasta ' + (t.budget / 100).toLocaleString('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: t.budget % 100 === 0 ? 0 : 2 }));
+    if (t.date != null) addChip(new Date(t.date * 86400000).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', timeZone: 'UTC' }));
+    var ul = $('wishes'); ul.textContent = '';
+    t.wishes.forEach(function (w) { var li = document.createElement('li'); li.textContent = w; ul.appendChild(li); });
+    $('wishesBox').hidden = !t.wishes.length;
+    // Abrir en la app: el enlace NO lleva la palabra; la app la pedirá.
+    var a = $('open'); a.href = 'regalario://s#' + payload; a.hidden = false;
+  }
+
+  $('codeForm').addEventListener('submit', async function (ev) {
+    ev.preventDefault();
+    var err = $('codeErr'); err.hidden = true; $('codeGo').disabled = true;
+    try {
+      var t = await open(payload, $('codeInput').value);
+      if (!t) { err.textContent = 'No es esa. Revisa la palabra (da igual mayúsculas, guion o espacios) o pídesela otra vez a quien organiza.'; err.hidden = false; $('codeInput').select(); }
+      else { $('codeInput').value = ''; fill(t); show('ask'); }
+    } catch (e) {
+      err.textContent = 'Tu navegador no permite abrir el sobre aquí (hace falta una conexión segura, https). Abre el enlace con la app Regalario.'; err.hidden = false;
+    }
+    $('codeGo').disabled = false;
+  });
+  $('reveal').addEventListener('click', function () { show('done'); });
+  $('hide').addEventListener('click', function () { show('ask'); });
+})();
+</script>
+</body>
+</html>
