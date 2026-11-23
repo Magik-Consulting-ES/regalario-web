@@ -2,8 +2,18 @@
   "applinks": {
     "details": [
       {
-        "appIDs": ["P25LS3A7ML.com.magikdevelopments.regalario"],
-        "components": [{ "/": "/s", "comment": "Enlaces del amigo invisible: https://magik-consulting-es.github.io/regalario-web/s#…" }]
+        "appIDs": [
+          "P25LS3A7ML.com.magikdevelopments.regalario"
+        ],
+        "components": [
+          {
+            "/": "/s",
+            "comment": "Amigo invisible: https://regalario.magikconsulting.es/s#\u2026"
+          },
+          {
+            "/": "/s/*"
+          }
+        ]
       }
     ]
   }

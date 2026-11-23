@@ -1,10 +1,15 @@
 [
   {
-    "relation": ["delegate_permission/common.handle_all_urls"],
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
     "target": {
       "namespace": "android_app",
       "package_name": "com.magikdevelopments.regalario",
-      "sha256_cert_fingerprints": ["REEMPLAZAR_POR_LA_HUELLA_SHA256_DE_LA_FIRMA_DE_LA_APP"]
+      "sha256_cert_fingerprints": [
+        "13:4C:FA:48:FC:D1:D0:DF:38:54:16:74:7A:2F:64:53:CA:4C:41:D7:53:18:8E:33:9B:9B:E3:66:FF:55:75:59",
+        "65:0C:BC:36:42:6B:AF:36:D6:5B:0E:74:7E:4D:CA:F4:40:98:3A:5B:0A:5D:6D:F2:32:32:71:33:AD:83:7D:00"
+      ]
     }
   }
 ]
